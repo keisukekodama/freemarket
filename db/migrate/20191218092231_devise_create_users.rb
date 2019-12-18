@@ -1,11 +1,21 @@
 # frozen_string_literal: true
 
-class DeviseCreateUsers < ActiveRecord::Migration[5.0]
+class DeviseCreateUsers < ActiveRecord::Migration[5.1]
   def change
     create_table :users do |t|
       ## Database authenticatable
-      t.string :email,              null: false, default: ""
+      t.string :email, null: false, null: false
       t.string :encrypted_password, null: false, default: ""
+      t.string :nickname, null: false
+      t.string :avatar
+      t.text :introduction
+      t.string :first_name, null: false
+      t.string :first_name_reading, null: false
+      t.string :last_name, null: false
+      t.string :last_name_reading, null: false
+      t.date :birthday, null: false
+      t.integer :earnings, default: 0
+      t.integer :points, default: 0
 
       ## Recoverable
       t.string   :reset_password_token
@@ -15,12 +25,11 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.0]
       t.datetime :remember_created_at
 
       ## Trackable
-      t.integer  :sign_in_count, default: 0, null: false
-      t.datetime :current_sign_in_at
-      t.datetime :last_sign_in_at
-      t.string   :current_sign_in_ip
-      t.string   :last_sign_in_ip
-      t.string   :nickname
+      # t.integer  :sign_in_count, default: 0, null: false
+      # t.datetime :current_sign_in_at
+      # t.datetime :last_sign_in_at
+      # t.string   :current_sign_in_ip
+      # t.string   :last_sign_in_ip
 
       ## Confirmable
       # t.string   :confirmation_token

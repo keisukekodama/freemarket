@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  root to: "products#index"
   devise_for :users
+  root to: "products#index"
   resources :users, only: [:show] do
     member do
       get "likes", "listings", "in_progress", "completed", "purchase", "purchased"

@@ -10,44 +10,215 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190315090056) do
+ActiveRecord::Schema.define(version: 20191218094909) do
 
-  create_table "products", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "name", null: false
-    t.text "detail"
-    t.integer "shipping_fee"
-    t.integer "expected_date"
-    t.integer "price", null: false
-    t.integer "like_count", default: 0
-    t.string "status", null: false
-    t.string "size"
-    t.integer "transaction_status", default: 0, null: false
-    t.integer "purchaser_id"
-    t.integer "user_id", null: false
+  create_table "addresses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "phone_number"
+    t.string "postal_code", default: ""
+    t.integer "prefecture", default: 0
+    t.string "city", default: ""
+    t.string "house_number", default: ""
+    t.string "building_name", default: ""
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_products_on_name"
-    t.index ["price"], name: "index_products_on_price"
-    t.index ["user_id"], name: "index_products_on_user_id"
+    t.index ["user_id"], name: "index_addresses_on_user_id"
   end
 
-  create_table "users", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "email", default: "", null: false
+  create_table "brand_groups", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "brand_names", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_brand_names_on_name"
+  end
+
+  create_table "brandname_brandgroups", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "brand_name_id", null: false
+    t.bigint "brand_group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_group_id"], name: "index_brandname_brandgroups_on_brand_group_id"
+    t.index ["brand_name_id"], name: "index_brandname_brandgroups_on_brand_name_id"
+  end
+
+  create_table "cards", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "customer_token", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_cards_on_user_id"
+  end
+
+  create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name", null: false
+    t.string "ancestry"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "category_brandgroups", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "category_id", null: false
+    t.bigint "brand_group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_group_id"], name: "index_category_brandgroups_on_brand_group_id"
+    t.index ["category_id"], name: "index_category_brandgroups_on_category_id"
+  end
+
+  create_table "category_sizegroups", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "category_id", null: false
+    t.bigint "size_group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_category_sizegroups_on_category_id"
+    t.index ["size_group_id"], name: "index_category_sizegroups_on_size_group_id"
+  end
+
+  create_table "comment_items", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.text "comment", null: false
+    t.bigint "item_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_comment_items_on_item_id"
+    t.index ["user_id"], name: "index_comment_items_on_user_id"
+  end
+
+  create_table "dealing_chat_messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.text "message", null: false
+    t.bigint "dealing_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dealing_id"], name: "index_dealing_chat_messages_on_dealing_id"
+    t.index ["user_id"], name: "index_dealing_chat_messages_on_user_id"
+  end
+
+  create_table "dealings", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "phase", default: 0
+    t.datetime "buyer_datetime"
+    t.datetime "seller_datetime"
+    t.bigint "item_id"
+    t.bigint "buyer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_dealings_on_buyer_id"
+    t.index ["item_id"], name: "index_dealings_on_item_id"
+  end
+
+  create_table "item_brands", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "item_id", null: false
+    t.bigint "brand_name_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_name_id"], name: "index_item_brands_on_brand_name_id"
+    t.index ["item_id"], name: "index_item_brands_on_item_id"
+  end
+
+  create_table "item_images", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.text "image", null: false
+    t.bigint "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_images_on_item_id"
+  end
+
+  create_table "item_sizes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "item_id", null: false
+    t.bigint "size_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_sizes_on_item_id"
+    t.index ["size_id"], name: "index_item_sizes_on_size_id"
+  end
+
+  create_table "items", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name", null: false
+    t.integer "price", null: false
+    t.text "detail", null: false
+    t.integer "condition", null: false
+    t.integer "delivery_fee_payer", null: false
+    t.integer "delivery_method", null: false
+    t.integer "delivery_agency", null: false
+    t.integer "delivery_days", null: false
+    t.integer "deal", default: 0
+    t.bigint "category_id", null: false
+    t.bigint "seller_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_items_on_category_id"
+    t.index ["name"], name: "index_items_on_name"
+    t.index ["seller_id"], name: "index_items_on_seller_id"
+  end
+
+  create_table "likes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "item_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_likes_on_item_id"
+    t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "size_groups", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sizes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name", null: false
+    t.string "group_name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sns_credentials", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "provider", null: false
+    t.string "uid", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_sns_credentials_on_user_id"
+  end
+
+  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "email", null: false
     t.string "encrypted_password", default: "", null: false
+    t.string "nickname", null: false
+    t.string "avatar"
+    t.text "introduction"
+    t.string "first_name", null: false
+    t.string "first_name_reading", null: false
+    t.string "last_name", null: false
+    t.string "last_name_reading", null: false
+    t.date "birthday", null: false
+    t.integer "earnings", default: 0
+    t.integer "points", default: 0
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string "current_sign_in_ip"
-    t.string "last_sign_in_ip"
-    t.string "nickname"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "products", "users"
+  create_table "values", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "dealing_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dealing_id"], name: "index_values_on_dealing_id"
+    t.index ["user_id"], name: "index_values_on_user_id"
+  end
+
+  add_foreign_key "dealings", "users", column: "buyer_id"
+  add_foreign_key "items", "users", column: "seller_id"
 end
